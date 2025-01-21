@@ -1,6 +1,5 @@
-// pages/api/razorpay.js
-const Razorpay = require("razorpay");
-const shortid = require("shortid");
+import Razorpay from "razorpay";
+import { generate as shortidGenerate } from "shortid";
 
 // Initialize razorpay object
 const razorpay = new Razorpay({
@@ -11,23 +10,20 @@ const razorpay = new Razorpay({
 export async function POST(request) {
   try {
     const { productId } = await request.json();
-    // TODO: Make sure to handle your payment here.
-    // Create an order -> generate the OrderID -> Send it to the Front-end
-    // Also, check the amount and currency on the backend (Security measure)
     const payment_capture = 1;
-    const amount = 1 * 100; // amount in paisa. In our case it's INR 1
+
+    // Use productId to determine amount (you should implement your own logic here)
+    const amount = productId === "example_ebook" ? 100 : 1 * 100; // amount in paisa
     const currency = "INR";
     const options = {
       amount: amount.toString(),
       currency,
-      receipt: shortid.generate(),
+      receipt: shortidGenerate(),
       payment_capture,
       notes: {
-        // These notes will be added to your transaction. So you can search it within their dashboard.
-        // Also, it's included in webhooks as well. So you can automate it.
         paymentFor: "example_ebook",
         userId: "user_id_here",
-        productId: "your_product_id",
+        productId: productId, // Using the productId from the request
       },
     };
 
